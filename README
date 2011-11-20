@@ -1,0 +1,6 @@
+A script for solving soduku.
+
+2011-11-20
+
+	The script solves the simplest sodukus. Just follows the rules of the game
+	without any derrived rules. Good thing: it will admit it's defeat.

@@ -68,8 +68,8 @@ class board:
         column = self.find_column(pos)
         quad = self.find_quadrant(pos)
         value = self.b[pos]
-        
-        
+        result = False
+        #print('hellu')
 
         for i in range(9):
             index = row*9+i
@@ -78,8 +78,9 @@ class board:
                 self.b[index].remove(value)
                 
                 if len(self.b[index]) == 1:
-                   
-                    self.b[index] = self.b[index][0]
+                   result = True
+                   print('true')
+                   self.b[index] = self.b[index][0]
 
         for i in range(9):
             index = column+i*9
@@ -87,8 +88,9 @@ class board:
                 self.b[index].remove(value)
                 
                 if len(self.b[index]) == 1:
-                    
-                     self.b[index] = self.b[index][0]
+                    result = True
+                    print('true')
+                    self.b[index] = self.b[index][0]
 
         #temporary variables for holding start pos of quadrant
         #print('quad: ', quad)
@@ -101,8 +103,11 @@ class board:
                     self.b[index].remove(value)
                     
                     if len(self.b[index]) == 1:
-                    
+                        result = True
+                        print('true')
                         self.b[index] = self.b[index][0]
+
+        return result
 
     def done(self):
         for var in self.b:
@@ -110,24 +115,35 @@ class board:
                 return False
 
         return True
-
+#not self.done() and
     def solve(self):
         iterations = 0;
-        while not self.done():
+        keep_going = True
+        
+        while keep_going:
+            #print('ha')
+            keep_going = False
             for r in range(81):
                 if self.b[r].__class__ != list: 
-                    self.clear_false(r)
+                    keep_going = keep_going or self.clear_false(r)
             iterations = iterations + 1
+            if self.done():
+                break
+
+        if keep_going == False:
+            print('Could not solve')
+            for var in range(9):
+                print(self.get_row(var))
 
         print('Number of iterations needed: ', iterations)
-        
+    
                 
 
        
 
 
-c = board((4,0,0,0,0,3,0,0,0,3,2,9,0,0,7,0,4,5,0,1,0,0,2,9,0,0,3,0,0,0,7,0,0,3,9,6,1,0,7,0,0,0,5,0,4,9,5,3,0,0,6,0,0,0,8,0,0,2,6,0,0,7,0,6,9,0,5,0,0,8,3,2,0,0,0,3,0,0,0,0,1))
-
+#c = board((4,0,0,0,0,3,0,0,0,3,2,9,0,0,7,0,4,5,0,1,0,0,2,9,0,0,3,0,0,0,7,0,0,3,9,6,1,0,7,0,0,0,5,0,4,9,5,3,0,0,6,0,0,0,8,0,0,2,6,0,0,7,0,6,9,0,5,0,0,8,3,2,0,0,0,3,0,0,0,0,1))
+print('Hellew and whalecum to sodukosolver, input! 0 is empty!')
 temptwo = ''
 print('first row: ', end='')
 tempone = input()
@@ -157,13 +173,20 @@ print('ninth row: ', end='')
 tempone = input()
 temptwo = temptwo+tempone
 
-print(temptwo)
 
-# c.print_board()
+input_list = list()
+
+for i in temptwo:
+    if i != ' ':
+        input_list.append(int(i))
+
+print(input_list)
+
+board = board(input_list)
+board.print_board()
 
 
+board.solve()
 
-# c.solve()
-
-# c.print_board()
+board.print_board()
 
