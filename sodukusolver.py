@@ -63,51 +63,155 @@ class board:
     def find_quadrant(self, pos):
         return int(self.find_column(pos)/3) + int(self.find_row(pos)/3)*3
 
+
+
+# Reduces the possible numbers
     def clear_false(self, pos):
         row = self.find_row(pos)
         column = self.find_column(pos)
         quad = self.find_quadrant(pos)
         value = self.b[pos]
         result = False
-        #print('hellu')
 
+        # Row
         for i in range(9):
             index = row*9+i
             if self.b[index].__class__ == list and self.b[index].__contains__(value):
 
                 self.b[index].remove(value)
-                
+                result = True
                 if len(self.b[index]) == 1:
-                   result = True
-                   print('true')
+                   
+               
                    self.b[index] = self.b[index][0]
-
+        #Column
         for i in range(9):
             index = column+i*9
             if self.b[index].__class__ == list and self.b[index].__contains__(value):
                 self.b[index].remove(value)
-                
+                result = True
                 if len(self.b[index]) == 1:
-                    result = True
-                    print('true')
+                    
+
                     self.b[index] = self.b[index][0]
 
+
+        # Quadrant
         #temporary variables for holding start pos of quadrant
-        #print('quad: ', quad)
         startpos = 27*int(quad/3) + 3*int(quad%3)
         for i in range(3):
             for j in range(3):
                 index = startpos + i*9 + j
-                #print('index: ', index)
+                
                 if self.b[index].__class__ == list and self.b[index].__contains__(value):
                     self.b[index].remove(value)
-                    
+                    result = True
                     if len(self.b[index]) == 1:
-                        result = True
-                        print('true')
+                        
                         self.b[index] = self.b[index][0]
 
         return result
+
+# Checks if a number is alone in it's row, column or quad
+    def clear_false_2(self, pos):
+        row = self.find_row(pos)
+        column = self.find_column(pos)
+        quad = self.find_quadrant(pos)
+
+
+        
+
+        # Row
+        # Solution is gathering all the lists
+        # and if a number is alone it has it's place.
+        temp_list = list()
+        use_templist = False
+        for i in range(9):
+            index = row*9+i
+            if self.b[index].__class__ == list:
+                if (len(temp_list) > 0):
+                    use_templist = True
+                temp_list.extend(self.b[index])
+        if use_templist:
+                for i in range(9):
+                    i = i + 1
+                    if temp_list.count(i) == 1:
+                        for j in range(9):
+                            index = row*9+j
+                            if self.b[index].__class__ == list and self.b[index].__contains__(i):
+                                # print()
+                                # print("DEBUG")
+                                # print()
+                                # self.print_board()
+                                # print()
+                                # for var in range(9):
+                                #     print(self.get_row(var))
+                                # print("TEMP_LIST= ", temp_list)
+                                # print("INDEX= ", index)
+                                # print("I= ", i)
+                                # print()
+                
+                                self.b[index] = i
+                                return True
+
+                    
+                
+
+        ##END Row calc
+
+
+        #Column
+        temp_list = list()
+        use_templist = False
+        for i in range(9):
+            index = column+i*9
+            if self.b[index].__class__ == list:
+                if (len(temp_list) > 0):
+                    use_templist = True
+                temp_list.extend(self.b[index])
+
+        if use_templist:
+                for i in range(9):
+                    i = i+1
+                    if temp_list.count(i) == 1:
+                        for j in range(9):
+                            index = column+j*9
+                            if self.b[index].__class__ == list and self.b[index].__contains__(i):
+                                self.b[index] = i
+                                return True
+                                
+        # Quadrant
+        #temporary variables for holding start pos of quadrant
+
+        temp_list = list()
+        use_templist = False
+        startpos = 27*int(quad/3) + 3*int(quad%3)
+        for i in range(3):
+            for j in range(3):
+                index = startpos + i*9 + j
+                if self.b[index].__class__ == list:
+                    if (len(temp_list) > 0):
+                        use_templist = True
+                    temp_list.extend(self.b[index])
+        
+                            
+
+        if use_templist:
+                for i in range(9):
+                    i = i + 1
+                    if temp_list.count(i) == 1:
+                        for j in range(3):
+                            for k in range(3):
+                                index = startpos + j*9 + k
+                                if self.b[index].__class__ == list and self.b[index].__contains__(i):
+                                    
+                                    
+                                    self.b[index] = i
+                                    return True
+                            
+
+        return False
+
 
     def done(self):
         for var in self.b:
@@ -126,12 +230,24 @@ class board:
             for r in range(81):
                 if self.b[r].__class__ != list: 
                     keep_going = keep_going or self.clear_false(r)
+
+            if not keep_going:
+                for r in range(81):
+                    if self.b[r].__class__ != list: 
+                        keep_going = keep_going or self.clear_false_2(r)
+
+            print()
+            print()
+            for var in range(9):
+                print(self.get_row(var))
+
             iterations = iterations + 1
             if self.done():
                 break
 
         if keep_going == False:
             print('Could not solve')
+            
             for var in range(9):
                 print(self.get_row(var))
 
